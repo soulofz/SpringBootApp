@@ -108,4 +108,9 @@ public class UserRepository {
         }
         return Optional.empty();
     }
-}
+    public int deleteUserById(int id) throws SQLException {
+            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_USER);
+            preparedStatement.setInt(1, id);
+            return preparedStatement.executeUpdate();
+        }
+    }
