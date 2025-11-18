@@ -13,11 +13,12 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/security")
 public class SecurityController {
     public SecurityService securityService;
@@ -45,7 +46,7 @@ public class SecurityController {
         Boolean result = securityService.registration(userRegistrationDto);
         if (result) {
             List<User> users = userService.getAllUsers();
-            model.addAttribute("usersKey", users );
+            model.addAttribute("usersKey", users);
             return "users";
         }
         return "error-page";

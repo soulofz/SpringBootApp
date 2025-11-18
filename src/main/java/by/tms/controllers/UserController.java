@@ -1,17 +1,19 @@
 package by.tms.controllers;
 
 import by.tms.model.User;
+import by.tms.model.UserRegistrationDto;
 import by.tms.service.UserService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
-@Controller
+@RestController
 @RequestMapping("/user")
 public class UserController {
 
@@ -22,17 +24,36 @@ public class UserController {
     }
 
     @GetMapping
-    public ModelAndView getAllUsers(ModelAndView model) {
+    public ResponseEntity<List<User>> getAllUsers() {
         List<User> allUsers = userService.getAllUsers();
-        model.setViewName("users");
-        model.addObject("usersKey", allUsers);
-        return model;
+        if (allUsers.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(allUsers);
     }
 
     @GetMapping("/{id}")
-    public String getUserById(@PathVariable("id") int id, Model model) {
-        User user = userService.getUserById(id);
-        model.addAttribute("user", user);
-        return "user";
+    public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
+        Optional<User> user = userService.getUserById(id);
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping
+    public ResponseEntity<HttpStatusCode> addUser(@RequestBody UserRegistrationDto user) {
+        if (userService.addUser(user)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<HttpStatusCode> deleteUser(@PathVariable("id") int id) {
+        if (userService.deleteUserById(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 }
