@@ -40,7 +40,7 @@ public class SecurityController {
                 errMessages.add(objectError.getDefaultMessage());
             }
             model.addAttribute("errors", errMessages);
-            return "error";
+            return "error-page";
         }
         Boolean result = securityService.registration(userRegistrationDto);
         if (result) {
@@ -48,6 +48,6 @@ public class SecurityController {
             model.addAttribute("usersKey", users );
             return "users";
         }
-        return "error";
+        return "error-page";
     }
 }
