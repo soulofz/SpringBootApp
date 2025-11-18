@@ -1,6 +1,7 @@
 package by.tms.controllers;
 
 
+import by.tms.exception.UsernameExistsException;
 import by.tms.model.User;
 import by.tms.model.UserRegistrationDto;
 import by.tms.service.SecurityService;
@@ -32,15 +33,15 @@ public class SecurityController {
     @PostMapping("/registration")
     public String registration(@Valid @ModelAttribute UserRegistrationDto userRegistrationDto,
                                BindingResult bindingResult,
-                               Model model) {
+                               Model model) throws UsernameExistsException {
         if (bindingResult.hasErrors()) {
-            List<String> errMessages = new ArrayList<>();
+            List<String> errorMessages = new ArrayList<>();
 
             for (ObjectError objectError : bindingResult.getAllErrors()) {
                 System.out.println(objectError);
-                errMessages.add(objectError.getDefaultMessage());
+                errorMessages.add(objectError.getDefaultMessage());
             }
-            model.addAttribute("errors", errMessages);
+            model.addAttribute("errors", errorMessages);
             return "error-page";
         }
         Boolean result = securityService.registration(userRegistrationDto);
