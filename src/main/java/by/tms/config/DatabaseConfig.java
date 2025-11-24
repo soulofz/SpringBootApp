@@ -28,7 +28,8 @@ public class DatabaseConfig {
     @Bean
     public Connection getConnection() {
         try {
-            return DriverManager.getConnection(environment.getProperty("database_url"),
+            return DriverManager.getConnection(
+                    environment.getProperty("database_url"),
                     environment.getProperty("database_login"),
                     environment.getProperty("database_password"));
         } catch (SQLException e) {

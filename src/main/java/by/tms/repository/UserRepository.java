@@ -1,59 +1,35 @@
 package by.tms.repository;
 
-
 import by.tms.model.User;
-import by.tms.model.UserRegistrationDto;
-import jakarta.annotation.PostConstruct;
+import by.tms.model.UserCreateDto;
+import by.tms.util.SqlList;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
+
 
 @Repository
 public class UserRepository {
-    private static final String INSERT_USER = "INSERT INTO users(id,username,password,first_name,last_name,created,updated,email,age) VALUES(DEFAULT,?,?,?,?,?,?,?,?)";
-    private static final String DELETE_USER = "DELETE FROM users WHERE id = ?";
-    private static final String SELECT_ALL_USERS = "SELECT * FROM users";
-    private static final String GET_USER_BY_ID = "SELECT * FROM users WHERE id = ?";
-    private static final String SELECT_USER_BY_USERNAME_SQL = "SELECT * FROM users WHERE username = ?";
-
-    private Connection connection;
+    private final Connection connection;
     private final int ONE_LINE_FROM_DB = 1;
 
-    public static Connection createConnection() throws SQLException, ClassNotFoundException {
-        Properties props = new Properties();
-        Class.forName("org.postgresql.Driver");
-        return DriverManager.getConnection(
-                props.getProperty("db_url"),
-                props.getProperty("db_login"),
-                props.getProperty("db_password"));
-    }
-
-    @PostConstruct
-    public void init() throws SQLException, ClassNotFoundException {
-        connection = createConnection();
-    }
-
-    public User fillUser(ResultSet resultSet) throws SQLException {
-        User user = new User();
-        user.setId(resultSet.getInt("id"));
-        user.setUsername(resultSet.getString("username"));
-        user.setPassword(resultSet.getString("password"));
-        user.setFirstName(resultSet.getString("first_name"));
-        user.setLastName(resultSet.getString("last_name"));
-        user.setEmail(resultSet.getString("email"));
-        user.setAge(resultSet.getInt("age"));
-        user.setCreated(resultSet.getTimestamp("created").toLocalDateTime());
-        user.setUpdated(resultSet.getTimestamp("changed").toLocalDateTime());
-        return user;
+    @Autowired
+    public UserRepository(Connection connection) {
+        this.connection = connection;
     }
 
     public List<User> getAllUsers() {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(SELECT_ALL_USERS);
+            PreparedStatement preparedStatement = connection.prepareStatement(SqlList.SELECT_ALL_USERS);
             ResultSet resultSet = preparedStatement.executeQuery();
             return parseResultSetToUserList(resultSet);
         } catch (SQLException e) {
@@ -64,7 +40,7 @@ public class UserRepository {
 
     public Optional<User> getUserById(int id) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_BY_ID);
+            PreparedStatement preparedStatement = connection.prepareStatement(SqlList.GET_USER_BY_ID);
             ResultSet resultSet = preparedStatement.executeQuery();
             return parseResultSetToUser(resultSet);
         } catch (SQLException e) {
@@ -88,21 +64,38 @@ public class UserRepository {
         return Optional.empty();
     }
 
-    public Optional<User> getUserByUsername(String username) {
+    public boolean addUser(UserCreateDto user) {
         try {
-            PreparedStatement statement = connection.prepareStatement(SELECT_USER_BY_USERNAME_SQL);
-            statement.setString(1, username);
-            ResultSet resultSet = statement.executeQuery();
-            return parseResultSetToUser(resultSet);
+            PreparedStatement preparedStatement = connection.prepareStatement(SqlList.INSERT_USER);
+            preparedStatement.setString(1, user.getFirstName());
+            preparedStatement.setString(2, user.getLastName());
+            preparedStatement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+            preparedStatement.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+            preparedStatement.setString(5, user.getEmail());
+            preparedStatement.setInt(6, user.getAge());
+
+            return preparedStatement.executeUpdate() == ONE_LINE_FROM_DB;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return Optional.empty();
+        return false;
+    }
+
+    public User fillUser(ResultSet resultSet) throws SQLException {
+        User user = new User();
+        user.setId(resultSet.getInt("id"));
+        user.setFirstName(resultSet.getString("first_name"));
+        user.setLastName(resultSet.getString("last_name"));
+        user.setEmail(resultSet.getString("email"));
+        user.setAge(resultSet.getInt("age"));
+        user.setCreated(resultSet.getTimestamp("created").toLocalDateTime());
+        user.setUpdated(resultSet.getTimestamp("changed").toLocalDateTime());
+        return user;
     }
 
     public boolean deleteUserById(int id) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_USER);
+            PreparedStatement preparedStatement = connection.prepareStatement(SqlList.DELETE_USER_BY_ID);
             preparedStatement.setInt(1, id);
             return preparedStatement.executeUpdate() == ONE_LINE_FROM_DB;
         } catch (SQLException e) {
@@ -111,19 +104,18 @@ public class UserRepository {
         return false;
     }
 
-    public boolean addUser(UserRegistrationDto user) {
+    public boolean updateUser(User user) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER);
-            preparedStatement.setString(1, user.getUsername());
-            preparedStatement.setString(2, user.getPassword());
-            preparedStatement.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
-            preparedStatement.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
-            preparedStatement.setInt(8, user.getAge());
+            PreparedStatement preparedStatement = connection.prepareStatement(SqlList.UPDATE_USER_BY_ID);
+            preparedStatement.setString(1, user.getFirstName());
+            preparedStatement.setString(2, user.getLastName());
+            preparedStatement.setString(3,user.getEmail());
+            preparedStatement.setInt(4, user.getAge());
+            preparedStatement.setInt(5,user.getId());
             return preparedStatement.executeUpdate() == ONE_LINE_FROM_DB;
-        } catch (SQLException e) {
+        }catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return false;
     }
 }
-

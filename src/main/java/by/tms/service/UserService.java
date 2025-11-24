@@ -1,12 +1,13 @@
 package by.tms.service;
 
 
+import by.tms.exception.UserNotFoundException;
 import by.tms.model.User;
+import by.tms.model.UserCreateDto;
 import by.tms.model.UserRegistrationDto;
 import by.tms.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ public class UserService {
         return userRepository.getUserById(id);
     }
 
-    public boolean addUser(UserRegistrationDto user) {
+    public boolean addUser(UserCreateDto user) {
         return userRepository.addUser(user);
     }
 
@@ -37,5 +38,14 @@ public class UserService {
             return user.isEmpty();
         }
         return false;
+    }
+
+    public Optional<User> updateUser(User user){
+        Optional<User> userOptional = getUserById(user.getId());
+        if (userOptional.isPresent() && userRepository.updateUser(user)) {
+            return userRepository.getUserById(user.getId());
+        }else {
+            throw new UserNotFoundException(user);
+        }
     }
 }
