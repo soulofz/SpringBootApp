@@ -24,12 +24,8 @@ public class SecurityService {
         if (isUsernameUsed(userRegistrationDto.getUsername())) {
             throw new UsernameExistsException(userRegistrationDto.getUsername());
         }
-        User user = new User();
-        user.setAge(userRegistrationDto.getAge());
-        user.setCreated(LocalDateTime.now());
-        user.setUpdated(LocalDateTime.now());
         try {
-            return false;
+            return securityRepository.registration(userRegistrationDto);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
