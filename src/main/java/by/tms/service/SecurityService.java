@@ -1,13 +1,10 @@
 package by.tms.service;
 
-
 import by.tms.exception.UsernameExistsException;
 import by.tms.model.UserRegistrationDto;
 import by.tms.repository.SecurityRepository;
 import by.tms.repository.UserRepository;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 public class SecurityService {
