@@ -2,7 +2,6 @@ package by.tms.service;
 
 
 import by.tms.exception.UsernameExistsException;
-import by.tms.model.User;
 import by.tms.model.UserRegistrationDto;
 import by.tms.repository.SecurityRepository;
 import by.tms.repository.UserRepository;
