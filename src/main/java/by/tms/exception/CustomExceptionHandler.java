@@ -1,30 +1,44 @@
 package by.tms.exception;
 
+import jakarta.xml.bind.ValidationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.sql.SQLException;
 
+@Slf4j
 @ControllerAdvice
 public class CustomExceptionHandler {
 
     @ExceptionHandler(UsernameExistsException.class)
-    public ModelAndView usernameExistsException(UsernameExistsException e) {
-        System.out.println("Username exists: " + e.getUsername());
+    public ResponseEntity<HttpStatusCode> usernameExistsException(UsernameExistsException e) {
+        log.warn("Username exists: {}", e.getUsername());
         ModelAndView modelAndView = new ModelAndView("error-page");
         modelAndView.setStatus(HttpStatus.BAD_REQUEST);
         modelAndView.addObject("errors", "Username " + e.getUsername() + " already exists");
-        return modelAndView;
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SQLException.class)
-    public ModelAndView sqlException(SQLException e) {
-        System.out.println("SQL exception: " + e.getMessage());
-        ModelAndView modelAndView = new ModelAndView("error-page");
-        modelAndView.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-        modelAndView.addObject("errors", "SQL exception: " + e.getMessage());
-        return modelAndView;
+    public ResponseEntity<HttpStatusCode> sqlException(SQLException e) {
+        log.warn("SQL exception: {}", e.getMessage());
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<HttpStatusCode> userNotFoundException(UserNotFoundException e) {
+        log.warn("User not found: {}", e.getMessage());
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<HttpStatusCode> validationException(ValidationException e) {
+        log.warn("Validation exception: {}", e.getMessage());
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

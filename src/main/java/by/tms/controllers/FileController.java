@@ -1,5 +1,6 @@
 package by.tms.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -8,16 +9,15 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/file")
 public class FileController {
@@ -25,17 +25,17 @@ public class FileController {
 
 
     @PostMapping("/upload")
-    public ResponseEntity<HttpStatusCode> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<HttpStatusCode> uploadFile(@RequestParam("filename") MultipartFile file) {
         try {
-            if (file.isEmpty() || file == null) {
+            if (file == null|| file.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             Files.copy(file.getInputStream(), ROOT_FILE_PATH.resolve(file.getOriginalFilename()));
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            log.error(e.getMessage());
         }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/{filename}")
@@ -49,7 +49,7 @@ public class FileController {
                 return new ResponseEntity<>(resource, headers, HttpStatus.OK);
             }
         } catch (MalformedURLException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -76,7 +76,7 @@ public class FileController {
                     .toList();
             return new ResponseEntity<>(fileNames, HttpStatus.OK);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

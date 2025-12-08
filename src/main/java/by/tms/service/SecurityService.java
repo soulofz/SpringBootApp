@@ -4,8 +4,10 @@ import by.tms.exception.UsernameExistsException;
 import by.tms.model.UserRegistrationDto;
 import by.tms.repository.SecurityRepository;
 import by.tms.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class SecurityService {
     private UserRepository userRepository;
@@ -23,7 +25,7 @@ public class SecurityService {
         try {
             return securityRepository.registration(userRegistrationDto);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
         }
         return false;
     }

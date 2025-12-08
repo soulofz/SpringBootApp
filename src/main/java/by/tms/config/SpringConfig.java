@@ -2,9 +2,8 @@ package by.tms.config;
 
 
 import by.tms.interceptor.LogInterceptor;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -28,12 +27,12 @@ public class SpringConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public EntityManagerFactory entityManagerFactory() {
-        return Persistence.createEntityManagerFactory("default");
+    public SessionFactory sessionFactory() {
+        return new org.hibernate.cfg.Configuration().configure().buildSessionFactory();
     }
 
     @Bean
-    public EntityManager entityManager() {
-        return entityManagerFactory().createEntityManager();
+    public Session initSession(){
+        return sessionFactory().openSession();
     }
 }

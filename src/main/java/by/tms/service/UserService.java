@@ -4,7 +4,6 @@ package by.tms.service;
 import by.tms.exception.UserNotFoundException;
 import by.tms.model.User;
 import by.tms.model.UserCreateDto;
-import by.tms.model.UserRegistrationDto;
 import by.tms.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
