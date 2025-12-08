@@ -34,7 +34,7 @@ public class UserController {
     public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
         Optional<User> user = userService.getUserById(id);
         if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
+            return new ResponseEntity<>(user.get(), HttpStatus.OK);
         }
         return ResponseEntity.notFound().build();
     }

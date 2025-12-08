@@ -1,60 +1,25 @@
 package by.tms.model;
 
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity(name = "security")
+@Data
+@NoArgsConstructor
 public class Security {
-    private int id;
+
+    @Id
+    @SequenceGenerator(name = "security_generator", sequenceName = "security_id_seq", allocationSize = 1)
+    @GeneratedValue(generator = "security_generator")
+    private Integer id;
+
+    @Column(name = "user_id", unique = true, nullable = false)
     private int userId;
+
     private String username;
     private String password;
+
+    @Enumerated(EnumType.STRING)
     private Role role;
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "Security{" +
-                "id=" + id +
-                ", userId=" + userId +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                '}';
-    }
 }

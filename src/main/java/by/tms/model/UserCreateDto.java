@@ -1,8 +1,10 @@
 package by.tms.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
+@AllArgsConstructor
 @Schema(description = "Это пользователь для создания в системе")
 @Data
 public class UserCreateDto {
