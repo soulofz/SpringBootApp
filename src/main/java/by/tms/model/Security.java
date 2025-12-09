@@ -2,10 +2,14 @@ package by.tms.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity(name = "security")
 @Data
+@EqualsAndHashCode(exclude = "user")
+@ToString(exclude = "user")
 @NoArgsConstructor
 public class Security {
 
@@ -14,12 +18,13 @@ public class Security {
     @GeneratedValue(generator = "security_generator")
     private Integer id;
 
-    @Column(name = "user_id", unique = true, nullable = false)
-    private int userId;
-
     private String username;
     private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToOne(optional = false)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

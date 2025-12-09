@@ -1,13 +1,18 @@
 package by.tms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 @Entity(name = "users")
 @Data
+@EqualsAndHashCode(exclude = "security")
+@ToString(exclude = "security")
 @Component
 public class User {
 
@@ -26,4 +31,8 @@ public class User {
     private int age;
     private LocalDateTime created;
     private LocalDateTime updated;
+
+    @JsonIgnore
+    @OneToOne(optional = false, mappedBy = "user", cascade = CascadeType.ALL)
+    private Security security;
 }

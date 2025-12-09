@@ -2,6 +2,7 @@ package by.tms.controllers;
 
 
 import by.tms.exception.UsernameExistsException;
+import by.tms.model.Security;
 import by.tms.model.UserRegistrationDto;
 import by.tms.service.SecurityService;
 import by.tms.service.UserService;
@@ -16,6 +17,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -27,6 +29,15 @@ public class SecurityController {
     public SecurityController(SecurityService securityService, UserService userService) {
         this.securityService = securityService;
         this.userService = userService;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Security> getSecurityById(@PathVariable("id") int id) {
+        Optional<Security> security = securityService.getSecurityById(id);
+        if (security.isPresent()) {
+            return new ResponseEntity<>(security.get(), HttpStatus.OK);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping("/registration")
