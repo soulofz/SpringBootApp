@@ -1,6 +1,5 @@
 package by.tms.controllers;
 
-
 import by.tms.exception.UsernameExistsException;
 import by.tms.model.Security;
 import by.tms.model.UserRegistrationDto;
