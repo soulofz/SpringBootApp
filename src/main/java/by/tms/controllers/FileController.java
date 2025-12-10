@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -27,7 +28,7 @@ public class FileController {
     @PostMapping("/upload")
     public ResponseEntity<HttpStatusCode> uploadFile(@RequestParam("filename") MultipartFile file) {
         try {
-            if (file == null|| file.isEmpty()) {
+            if (file == null || file.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
             Files.copy(file.getInputStream(), ROOT_FILE_PATH.resolve(file.getOriginalFilename()));
@@ -59,7 +60,7 @@ public class FileController {
         Path pathToFile = ROOT_FILE_PATH.resolve(filename);
         File file = new File(pathToFile.toString());
         if (file.exists()) {
-            if (file.delete()){
+            if (file.delete()) {
                 return new ResponseEntity<>(HttpStatus.OK);
             }
         }

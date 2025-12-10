@@ -1,6 +1,7 @@
 package by.tms.controllers;
 
 import by.tms.exception.UsernameExistsException;
+import by.tms.model.Role;
 import by.tms.model.Security;
 import by.tms.model.UserRegistrationDto;
 import by.tms.service.SecurityService;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,10 +41,25 @@ public class SecurityController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/role/{roleParam}")
+    public ResponseEntity<List<Security>> getSecurityByRole(@PathVariable("roleParam") String roleParam) {
+        try {
+            roleParam = roleParam.toUpperCase();
+            Role.valueOf(roleParam);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        List<Security> allSecurityByRole = securityService.getAllSecurityByRole(roleParam);
+        if (!allSecurityByRole.isEmpty()) {
+            return new ResponseEntity<>(allSecurityByRole, HttpStatus.OK);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     @PostMapping("/registration")
     public ResponseEntity<HttpStatusCode> registration(@Valid @RequestBody UserRegistrationDto userRegistrationDto,
                                                        BindingResult bindingResult) throws UsernameExistsException {
-        if (!bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             List<String> errorMessages = new ArrayList<>();
 
             for (ObjectError objectError : bindingResult.getAllErrors()) {

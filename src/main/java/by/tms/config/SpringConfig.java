@@ -1,10 +1,6 @@
 package by.tms.config;
 
-
 import by.tms.interceptor.LogInterceptor;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -24,15 +20,5 @@ public class SpringConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(logInterceptor);
-    }
-
-    @Bean
-    public SessionFactory sessionFactory() {
-        return new org.hibernate.cfg.Configuration().configure().buildSessionFactory();
-    }
-
-    @Bean
-    public Session initSession(){
-        return sessionFactory().openSession();
     }
 }

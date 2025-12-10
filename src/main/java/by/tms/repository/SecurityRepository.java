@@ -1,66 +1,16 @@
 package by.tms.repository;
 
-import by.tms.model.*;
-import by.tms.util.SqlList;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
-import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Session;
-import org.springframework.beans.factory.annotation.Autowired;
+import by.tms.model.Security;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import java.sql.*;
-import java.time.LocalDateTime;
-import java.util.Optional;
 
-@Slf4j
+import java.util.List;
+
 @Repository
-public class SecurityRepository {
-    private final Session session;
+public interface SecurityRepository extends JpaRepository<Security, Integer> {
+    boolean existsByUsername(String username);
 
-    @Autowired
-    public SecurityRepository(Session session) {
-        this.session = session;
-    }
-
-    public Optional<Security> getSecurityByUsername(String username) {
-        Query query = session   .createNativeQuery(SqlList.GET_SECURITY_BY_USERNAME, Security.class);
-        query.setParameter("username", username);
-        Object security = query.getSingleResultOrNull();
-        return Optional.ofNullable((Security) security);
-    }
-
-    public boolean registration(UserRegistrationDto dto) {
-        try{
-            log.info("Register user {}", dto.getUsername());
-            session.getTransaction().begin();
-            User user = new User();
-            user.setFirstName(dto.getFirstName());
-            user.setLastName(dto.getLastName());
-            user.setEmail(dto.getEmail());
-            user.setAge(dto.getAge());
-            user.setCreated(LocalDateTime.now());
-            user.setUpdated(LocalDateTime.now());
-            session.persist(user);
-            if(user.getId() == null) {
-                session.getTransaction().rollback();
-                return false;
-            }
-            Security security = new Security();
-            security.setUser(user);
-            security.setUsername(dto.getUsername());
-            security.setPassword(dto.getPassword());
-            security.setRole(Role.USER);
-            session.persist(security);
-            session.getTransaction().commit();
-            return true;
-        }catch(Exception e){
-            log.error(e.getMessage());
-            session.getTransaction().rollback();
-            return false;
-        }
-    }
-
-    public Optional<Security> getSecurityById(int id) {
-        return Optional.ofNullable(session.find(Security.class,id));
-    }
+    @Query(nativeQuery = true, value = "SELECT * FROM security WHERE role = :roleParam")
+    List<Security> customFindByRole(String roleParam);
 }

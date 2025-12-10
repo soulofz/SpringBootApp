@@ -3,6 +3,7 @@ package by.tms.controllers;
 import by.tms.model.User;
 import by.tms.model.UserCreateDto;
 import by.tms.service.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,8 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<HttpStatusCode> addUser(@RequestBody UserCreateDto user) {
-        if (userService.addUser(user)) {
+        User userForSave = userService.addUser(user);
+        if (userForSave != null) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -64,4 +66,21 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
+    @GetMapping("/sort/{field}")
+    public ResponseEntity<List<User>> getSortedUsersByField(@PathVariable("field") String field, @RequestParam("order") String order) {
+        List<User> users = userService.getSortedUsersByField(field, order);
+        if (users.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/pagination/{page}/{size}")
+    public ResponseEntity<Page<User>> getAllUsersWithPagination(@PathVariable("page") int page, @PathVariable("size") int size) {
+        Page<User> users = userService.getAllUsersWithPagination(page, size);
+        if (users.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(users);
+    }
 }
