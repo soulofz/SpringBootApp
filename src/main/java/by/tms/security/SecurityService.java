@@ -1,4 +1,4 @@
-package by.tms.service;
+package by.tms.security;
 
 import by.tms.exception.UsernameExistsException;
 import by.tms.model.Role;

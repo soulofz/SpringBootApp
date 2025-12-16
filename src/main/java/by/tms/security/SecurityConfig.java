@@ -1,4 +1,4 @@
-package by.tms.config;
+package by.tms.security;
 
 import by.tms.model.Role;
 import org.springframework.context.annotation.Bean;

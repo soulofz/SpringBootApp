@@ -1,10 +1,9 @@
-package by.tms.controllers;
+package by.tms.security;
 
 import by.tms.exception.UsernameExistsException;
 import by.tms.model.Role;
 import by.tms.model.Security;
 import by.tms.model.UserRegistrationDto;
-import by.tms.service.SecurityService;
 import by.tms.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
