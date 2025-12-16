@@ -54,4 +54,10 @@ public class CustomExceptionHandler {
         log.warn("Username not found: {}", e.getMessage());
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(WrongPasswordException.class)
+    public ResponseEntity<HttpStatusCode> wrongPasswordException(WrongPasswordException e) {
+        log.warn("Wrong password: {}", e.getMessage());
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
 }

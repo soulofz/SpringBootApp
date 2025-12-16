@@ -1,4 +1,4 @@
-package by.tms.model;
+package by.tms.model.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

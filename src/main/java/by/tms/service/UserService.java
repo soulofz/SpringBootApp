@@ -5,7 +5,7 @@ import by.tms.exception.UserNotFoundException;
 import by.tms.model.Role;
 import by.tms.model.Security;
 import by.tms.model.User;
-import by.tms.model.UserCreateDto;
+import by.tms.model.dto.UserCreateDto;
 import by.tms.repository.SecurityRepository;
 import by.tms.repository.UserRepository;
 import org.springframework.data.domain.Page;

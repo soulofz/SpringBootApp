@@ -1,9 +1,12 @@
 package by.tms.security;
 
 import by.tms.exception.UsernameExistsException;
+import by.tms.exception.WrongPasswordException;
 import by.tms.model.Role;
 import by.tms.model.Security;
-import by.tms.model.UserRegistrationDto;
+import by.tms.model.dto.AuthRequest;
+import by.tms.model.dto.AuthResponse;
+import by.tms.model.dto.UserRegistrationDto;
 import by.tms.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
@@ -11,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +35,19 @@ public class SecurityController {
         this.userService = userService;
     }
 
+    @PostMapping("/jwt")
+    public ResponseEntity<AuthResponse> generateJwt(@RequestBody AuthRequest authRequest) throws WrongPasswordException {
+        if (authRequest == null || authRequest.getUsername() == null || authRequest.getPassword() == null) {
+            throw new ValidationException("Invalid request");
+        }
+        Optional<String> jwt = securityService.generateJwt(authRequest);
+        if (jwt.isPresent()) {
+            return new ResponseEntity<>(new AuthResponse(jwt.get()), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Security> getSecurityById(@PathVariable("id") int id) {
         Optional<Security> security = securityService.getSecurityById(id);

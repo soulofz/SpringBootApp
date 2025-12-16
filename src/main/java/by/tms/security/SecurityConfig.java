@@ -26,6 +26,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(pathbuilder.matcher(HttpMethod.POST,"/registration")).permitAll()
+                                .requestMatchers(pathbuilder.matcher(HttpMethod.POST,"/security/jwt")).permitAll()
                                 .requestMatchers(pathbuilder.matcher(HttpMethod.GET,"/user")).hasRole(Role.ADMIN.name())
                                 .requestMatchers(pathbuilder.matcher(HttpMethod.GET,"/user/sort/**")).hasRole(Role.ADMIN.name())
                                 .requestMatchers(pathbuilder.matcher(HttpMethod.GET,"/user/pagination/**")).hasRole(Role.ADMIN.name())

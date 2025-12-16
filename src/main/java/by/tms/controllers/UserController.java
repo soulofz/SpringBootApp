@@ -3,7 +3,7 @@ package by.tms.controllers;
 import by.tms.exception.ForbiddenException;
 import by.tms.exception.UserNotFoundException;
 import by.tms.model.User;
-import by.tms.model.UserCreateDto;
+import by.tms.model.dto.UserCreateDto;
 import by.tms.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
