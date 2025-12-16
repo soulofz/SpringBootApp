@@ -41,4 +41,10 @@ public class CustomExceptionHandler {
         log.warn("Validation exception: {}", e.getMessage());
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<HttpStatusCode> forbiddenException(ForbiddenException e) {
+        log.warn("Forbidden exception: {}", e.getMessage());
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
 }

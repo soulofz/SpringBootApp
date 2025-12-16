@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SecurityRepository extends JpaRepository<Security, Integer> {
@@ -13,4 +14,6 @@ public interface SecurityRepository extends JpaRepository<Security, Integer> {
 
     @Query(nativeQuery = true, value = "SELECT * FROM security WHERE role = :roleParam")
     List<Security> customFindByRole(String roleParam);
+
+    Optional<Security> getByUsername(String username);
 }

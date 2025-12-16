@@ -1,5 +1,7 @@
 package by.tms.controllers;
 
+import by.tms.exception.ForbiddenException;
+import by.tms.exception.UserNotFoundException;
 import by.tms.model.User;
 import by.tms.model.UserCreateDto;
 import by.tms.service.UserService;
@@ -32,7 +34,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
+    public ResponseEntity<User> getUserById(@PathVariable("id") int id) throws ForbiddenException {
         Optional<User> user = userService.getUserById(id);
         if (user.isPresent()) {
             return new ResponseEntity<>(user.get(), HttpStatus.OK);
@@ -50,7 +52,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatusCode> deleteUser(@PathVariable("id") int id) {
+    public ResponseEntity<HttpStatusCode> deleteUser(@PathVariable("id") int id) throws ForbiddenException {
         if (userService.deleteUserById(id)) {
             return ResponseEntity.noContent().build();
         }
@@ -58,7 +60,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
+    public ResponseEntity<User> updateUser(@RequestBody User user) throws ForbiddenException {
         Optional<User> userOptional = userService.updateUser(user);
         if (userOptional.isPresent()) {
             return new ResponseEntity<>(userOptional.get(), HttpStatus.OK);
@@ -82,5 +84,14 @@ public class UserController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/myself")
+    public ResponseEntity<User> getMyself() {
+        Optional<User> user = userService.getInfoAboutMyself();
+        if (user.isEmpty()) {
+            throw new UserNotFoundException(-1);
+        }
+        return ResponseEntity.ok(user.get());
     }
 }
