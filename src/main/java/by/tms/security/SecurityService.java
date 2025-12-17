@@ -12,7 +12,6 @@ import by.tms.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,11 +28,12 @@ public class SecurityService {
     private final JwtUtils jwtUtils;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public SecurityService(UserRepository userRepository, SecurityRepository securityRepository, JwtUtils jwtUtils, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public SecurityService(UserRepository userRepository, SecurityRepository securityRepository,
+                           BCryptPasswordEncoder bCryptPasswordEncoder, JwtUtils jwtUtils) {
         this.userRepository = userRepository;
         this.securityRepository = securityRepository;
-        this.jwtUtils = jwtUtils;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.jwtUtils = jwtUtils;
     }
 
     @Transactional(rollbackFor = {Exception.class},
